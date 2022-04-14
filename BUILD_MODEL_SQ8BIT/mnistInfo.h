@@ -1,0 +1,85 @@
+#ifndef MNIST_GRAPHINFO_H
+#define MNIST_GRAPHINFO_H
+// Quantized scales can be used round_norm(val * QSCALE, QNORM) giving the real value in Q8
+
+// Input_1
+#define mnist_Input_1_OUT_SCALE	1.0
+#define mnist_Input_1_OUT_QSCALE	64
+#define mnist_Input_1_OUT_QNORM	6
+#define mnist_Input_1_OUT_ZERO_POINT	0
+// S1_Op_input_1_formatter
+#define mnist_S1_Op_input_1_formatter_OUT_SCALE	0.007874015748031496
+#define mnist_S1_Op_input_1_formatter_OUT_QSCALE	65
+#define mnist_S1_Op_input_1_formatter_OUT_QNORM	13
+#define mnist_S1_Op_input_1_formatter_OUT_ZERO_POINT	0
+// S2_Op_sequentialconv2dConv2D
+#define mnist_S2_Op_sequentialconv2dConv2D_OUT_SCALE	0.003548851003870368
+#define mnist_S2_Op_sequentialconv2dConv2D_OUT_QSCALE	116
+#define mnist_S2_Op_sequentialconv2dConv2D_OUT_QNORM	15
+#define mnist_S2_Op_sequentialconv2dConv2D_OUT_ZERO_POINT	0
+// S3_Op_conv2dbias
+#define mnist_S3_Op_conv2dbias_OUT_SCALE	2.7943708691892663e-05
+#define mnist_S3_Op_conv2dbias_OUT_QSCALE	117
+#define mnist_S3_Op_conv2dbias_OUT_QNORM	22
+#define mnist_S3_Op_conv2dbias_OUT_ZERO_POINT	0
+// S4_Conv2d_32x1x5x5_MaxPool_2x2_Relu
+#define mnist_S4_Conv2d_32x1x5x5_MaxPool_2x2_Relu_OUT_SCALE	0.036170343714436205
+#define mnist_S4_Conv2d_32x1x5x5_MaxPool_2x2_Relu_OUT_QSCALE	74
+#define mnist_S4_Conv2d_32x1x5x5_MaxPool_2x2_Relu_OUT_QNORM	11
+#define mnist_S4_Conv2d_32x1x5x5_MaxPool_2x2_Relu_OUT_ZERO_POINT	0
+// S5_Op_sequentialconv2d_1Conv2D
+#define mnist_S5_Op_sequentialconv2d_1Conv2D_OUT_SCALE	0.0009915126720443368
+#define mnist_S5_Op_sequentialconv2d_1Conv2D_OUT_QSCALE	65
+#define mnist_S5_Op_sequentialconv2d_1Conv2D_OUT_QNORM	16
+#define mnist_S5_Op_sequentialconv2d_1Conv2D_OUT_ZERO_POINT	0
+// S6_Op_conv2d_1bias
+#define mnist_S6_Op_conv2d_1bias_OUT_SCALE	3.586335414506272e-05
+#define mnist_S6_Op_conv2d_1bias_OUT_QSCALE	75
+#define mnist_S6_Op_conv2d_1bias_OUT_QNORM	21
+#define mnist_S6_Op_conv2d_1bias_OUT_ZERO_POINT	0
+// S7_Conv2d_64x32x3x3_MaxPool_2x2_Relu
+#define mnist_S7_Conv2d_64x32x3x3_MaxPool_2x2_Relu_OUT_SCALE	0.0670121936347541
+#define mnist_S7_Conv2d_64x32x3x3_MaxPool_2x2_Relu_OUT_QSCALE	69
+#define mnist_S7_Conv2d_64x32x3x3_MaxPool_2x2_Relu_OUT_QNORM	10
+#define mnist_S7_Conv2d_64x32x3x3_MaxPool_2x2_Relu_OUT_ZERO_POINT	0
+// S8_Op_sequentialdenseMatMul
+#define mnist_S8_Op_sequentialdenseMatMul_OUT_SCALE	0.0007440508343279362
+#define mnist_S8_Op_sequentialdenseMatMul_OUT_QSCALE	98
+#define mnist_S8_Op_sequentialdenseMatMul_OUT_QNORM	17
+#define mnist_S8_Op_sequentialdenseMatMul_OUT_ZERO_POINT	0
+// S9_Op_densebias
+#define mnist_S9_Op_densebias_OUT_SCALE	4.9860478584084e-05
+#define mnist_S9_Op_densebias_OUT_QSCALE	105
+#define mnist_S9_Op_densebias_OUT_QNORM	21
+#define mnist_S9_Op_densebias_OUT_ZERO_POINT	0
+// S10_Op_FULLY_CONNECTED_0_5_fusion
+#define mnist_S10_Op_FULLY_CONNECTED_0_5_fusion_OUT_SCALE	0.09604139403095395
+#define mnist_S10_Op_FULLY_CONNECTED_0_5_fusion_OUT_QSCALE	98
+#define mnist_S10_Op_FULLY_CONNECTED_0_5_fusion_OUT_QNORM	10
+#define mnist_S10_Op_FULLY_CONNECTED_0_5_fusion_OUT_ZERO_POINT	0
+// S11_Op_sequentialdense_1MatMul
+#define mnist_S11_Op_sequentialdense_1MatMul_OUT_SCALE	0.0031647877767682076
+#define mnist_S11_Op_sequentialdense_1MatMul_OUT_QSCALE	104
+#define mnist_S11_Op_sequentialdense_1MatMul_OUT_QNORM	15
+#define mnist_S11_Op_sequentialdense_1MatMul_OUT_ZERO_POINT	0
+// S12_Op_dense_1bias
+#define mnist_S12_Op_dense_1bias_OUT_SCALE	0.00030395062989294216
+#define mnist_S12_Op_dense_1bias_OUT_QSCALE	80
+#define mnist_S12_Op_dense_1bias_OUT_QNORM	18
+#define mnist_S12_Op_dense_1bias_OUT_ZERO_POINT	0
+// S13_Op_FULLY_CONNECTED_0_6_fusion
+#define mnist_S13_Op_FULLY_CONNECTED_0_6_fusion_OUT_SCALE	0.25
+#define mnist_S13_Op_FULLY_CONNECTED_0_6_fusion_OUT_QSCALE	64
+#define mnist_S13_Op_FULLY_CONNECTED_0_6_fusion_OUT_QNORM	8
+#define mnist_S13_Op_FULLY_CONNECTED_0_6_fusion_OUT_ZERO_POINT	0
+// S14_SoftMax
+#define mnist_S14_SoftMax_OUT_SCALE	3.0517578125e-05
+#define mnist_S14_SoftMax_OUT_QSCALE	64
+#define mnist_S14_SoftMax_OUT_QNORM	21
+#define mnist_S14_SoftMax_OUT_ZERO_POINT	0
+// Output_1
+#define mnist_Output_1_OUT_SCALE	3.0517578125e-05
+#define mnist_Output_1_OUT_QSCALE	64
+#define mnist_Output_1_OUT_QNORM	21
+#define mnist_Output_1_OUT_ZERO_POINT	0
+#endif //MNIST_GRAPHINFO_H
