@@ -1,17 +1,17 @@
 import tensorflow as tf
 
 
-model = tf.keras.models.load_model("model/mnist.h5")
+model = tf.keras.models.load_model("/home/taozhi/keras-yolo3/model_data/yolo-tiny.h5", compile=False)
 converter = tf.lite.TFLiteConverter.from_keras_model(model)
 tflite_model = converter.convert()
 
 # save model to disk
-open("model/mnist.tflite", "wb").write(tflite_model)
+open("model/yolo-tiny.tflite", "wb").write(tflite_model)
 
 
 
-converter = tf.lite.TFLiteConverter.from_keras_model(model)
-converter.optimizations = [tf.lite.Optimize.DEFAULT]
-aquant_model = converter.convert()
+# converter = tf.lite.TFLiteConverter.from_keras_model(model)
+# converter.optimizations = [tf.lite.Optimize.DEFAULT]
+# aquant_model = converter.convert()
 
-open("model/mnist_aquant.tflite", "wb").write(aquant_model)
+# open("model/mnist_aquant.tflite", "wb").write(aquant_model)

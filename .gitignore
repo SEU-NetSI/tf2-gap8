@@ -1,2 +1,4 @@
 .vscode/
 BUILD*/
+.ipynb_checkpoints/
+*.pgm
