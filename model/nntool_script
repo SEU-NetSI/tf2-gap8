@@ -1,7 +1,8 @@
-show
 adjust
-imageformat input_1 bw8 offset_int8
-aquant samples/* -s SQ8
 fusions --scale8
+imageformat input_1 bw8 offset_int8
+show
+aquant samples/* -s SQ8
 qshow
 save_state
+
