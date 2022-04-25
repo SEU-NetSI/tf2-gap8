@@ -26,6 +26,8 @@ static void cluster()
     __PREFIX(CNN)(Input_1, Output_1);
     printf("Model Run completed\n");
 
+
+    //resolve output
     int res = 0;
     signed short max = Output_1[0];
     for(int i = 0;i<NUM_CLASSES;i++)
@@ -47,7 +49,7 @@ int application()
 
     printf("\n\t *** NNTOOL application *** \n\n");
 
-    Input_1 = (unsigned char *)pi_l2_malloc((IMG_H*IMG_W)*sizeof(unsigned char));
+    Input_1 = (unsigned char *)pi_l2_malloc((IMG_H*IMG_W*IMG_C)*sizeof(unsigned char));
     if(Input_1==NULL)
     {
         printf("Fail to allocate memory for image\n");

@@ -1,61 +1,24 @@
 import tensorflow as tf
-from tensorflow import keras
 from keras.preprocessing.image import image
+from keras.datasets import mnist
 import numpy as np
-from PIL import Image
-import matplotlib.pyplot as plt
-from keras.datasets import fashion_mnist, mnist
 import time
 
-def load_img(image_path):
-    img = Image.open(image_path)
-    # plt.imshow(img)
-    # plt.show()
-    img = np.array(img, dtype="float32")
-    img = np.expand_dims(img, -1)
-    print(img.shape)
-    return img
-
-
-# paths = [
-#     '/home/taozhi/keras-yolo3/dog.jpg',
-#     '/home/taozhi/keras-yolo3/eagle.jpg',
-#     '/home/taozhi/keras-yolo3/giraffe.jpg',
-#     '/home/taozhi/keras-yolo3/horses.jpg',
-#     '/home/taozhi/keras-yolo3/kite.jpg',
-#     '/home/taozhi/keras-yolo3/person.jpg']
-
-# x_test = [load_img(path) for path in paths]
 
 # prepare data
 (X_Train, Y_Train), (X_Test, Y_Test) = mnist.load_data()
 X_Test = X_Test / 255.0
 X_Test = tf.expand_dims(X_Test, -1)
-x_test = X_Test[:100]
-y_test = Y_Test[:100]
+x_test = X_Test
+y_test = Y_Test
+x_test = np.array(x_test)
+print(x_test.shape)
 
 
-# # save gray picture
-# count=0
-# for i in x_test:
-#     image.save_img('samples/' + str(count) + '.pgm', i)
-#     count += 1
+# test tflite model
 
-# # load gray picture
-# x_test = []
-# for i in range(100):
-#     test_img = image.load_img('samples/' + str(i) + '.pgm', grayscale=True)
-#     test_img = np.array(test_img)
-#     test_img = np.expand_dims(test_img, -1)
-#     x_test.append(test_img)
-
-# x_test = np.array(x_test)
-# print(x_test.shape)
-
-
-# load tflite model
-model = tf.lite.Interpreter('model/mnist_aquant.tflite')
-
+# load model
+model = tf.lite.Interpreter('model/mnist.tflite')
 
 start = time.time()
 # allocate memory for models
@@ -85,3 +48,22 @@ tot = np.sum(np.equal(y_test, model_predictions))
 tflite_accuracy = tot / y_test.shape[0]
 print(f"tflite accuracy: {tflite_accuracy}")
 
+
+
+# save picture for quantize
+len = 10
+print(f"generate {len} samples for quantize.")
+x_quant = X_Test[:len]
+y_quant = Y_Test[:len]
+count=0
+for i in x_quant:
+    image.save_img('samples/' + str(count) + '.pgm', i)
+    count += 1
+
+# # load picture
+# x_test = []
+# for i in range(100):
+#     test_img = image.load_img('samples/' + str(i) + '.pgm', grayscale=True)
+#     test_img = np.array(test_img)
+#     test_img = np.expand_dims(test_img, -1)
+#     x_test.append(test_img)
