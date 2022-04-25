@@ -32,7 +32,8 @@ def to_one_hot(label_path):
 
 def make_model(num_classes):
     m = tf.keras.Sequential([
-        hub.KerasLayer("https://tfhub.dev/google/imagenet/resnet_v2_50/feature_vector/5",
+        hub.KerasLayer("https://tfhub.dev/google/tf2-preview/mobilenet_v2/feature_vector/4", 
+        output_shape=[1280],
         trainable=False),  # Can be True, see below.
     tf.keras.layers.Dense(num_classes, activation='softmax')
     ])
@@ -107,8 +108,8 @@ if __name__ == '__main__':
     model.fit(
         train_dataset,
         validation_data=val_dataset, 
-        epochs=20, 
+        epochs=1, 
         callbacks=[tensorboard_callback]
         )
     
-    model.save('model/resnet.h5')
+    model.save('model/model.h5')
