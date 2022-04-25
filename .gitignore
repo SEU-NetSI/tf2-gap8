@@ -2,3 +2,5 @@
 BUILD*/
 .ipynb_checkpoints/
 *.pgm
+runs/
+model/

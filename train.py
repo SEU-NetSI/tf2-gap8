@@ -1,8 +1,8 @@
 import tensorflow as tf
 import numpy as np
 import os
-from tensorflow import keras
-from keras.layers import Conv2D, MaxPool2D, Dense, Flatten, Dropout, BatchNormalization
+import tensorflow_hub as hub
+import datetime
 
 
 def is_image(filename, verbose=False):
@@ -31,19 +31,13 @@ def to_one_hot(label_path):
 
 
 def make_model(num_classes):
-    return keras.Sequential([
-        Conv2D(32, (5, 5), activation="relu", input_shape=(224, 224, 3)),
-        MaxPool2D(2, 2),
-        BatchNormalization(),
-        Conv2D(16, (3, 3), activation="relu"),
-        MaxPool2D(2, 2),
-        BatchNormalization(),
-        Flatten(),
-        Dense(64, activation="relu"),
-        Dense(32, activation="relu"),
-        Dropout(0.5),
-        Dense(num_classes, activation="softmax")
+    m = tf.keras.Sequential([
+        hub.KerasLayer("https://tfhub.dev/google/imagenet/resnet_v2_50/feature_vector/5",
+        trainable=False),  # Can be True, see below.
+    tf.keras.layers.Dense(num_classes, activation='softmax')
     ])
+    m.build([None, 224, 224, 3])  # Batch input shape.
+    return m
 
 
 def genearte_image_list(data_root):
@@ -71,7 +65,8 @@ def genearte_image_list(data_root):
 
 
 if __name__ == '__main__':
-    data_root = '/home/taozhi/archive/train'
+
+    data_root = '/home/taozhi/archive/train' # 训练数据根目录
     print(data_root)
     class_names = os.listdir(data_root)
     print(class_names)
@@ -81,25 +76,39 @@ if __name__ == '__main__':
     image_dataset = tf.data.Dataset.from_tensor_slices(image_paths).map(load_image)
     label_dataset = tf.data.Dataset.from_tensor_slices(image_labels).map(to_one_hot)
     dataset = tf.data.Dataset.zip((image_dataset, label_dataset))
-    
+    dataset = dataset.shuffle(dataset.cardinality().numpy())
+
+    # 划分数据集
     data_len = dataset.cardinality().numpy()
-    dataset = dataset.shuffle(data_len)
     train_len = int(data_len*0.7)
     val_len = data_len - train_len
-    
-    print(f"loaded {data_len} pictures.")
-    print(f"training on {train_len} images, validatiing on {val_len} images.")
     
     train_dataset = dataset.take(train_len)
     val_dataset = dataset.skip(train_len).take(val_len)
 
-    model = make_model(num_classes=2)
+    model = make_model(num_classes=len(class_names))
     model.summary()
+
     model.compile(
-        loss='categorical_crossentropy', # one-hot 编码使用categorical_crossentropy损失函数，否则使用sparse_categorical_crossentropy
-        optimizer='adam',
+        loss=tf.keras.losses.CategoricalCrossentropy(),
+        optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
         metrics=['accuracy']
     )
 
+    log_dir="runs/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+    tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
+
+    print(f"loaded {data_len} images.")
+    print(f"training on {train_len} images, validating on {val_len} images.")
+
     train_dataset = train_dataset.shuffle(train_len).batch(batch_size=32)
-    model.fit(train_dataset, epochs=10)
+    val_dataset = val_dataset.batch(32)
+
+    model.fit(
+        train_dataset,
+        validation_data=val_dataset, 
+        epochs=20, 
+        callbacks=[tensorboard_callback]
+        )
+    
+    model.save('model/resnet.h5')
