@@ -3,7 +3,7 @@ import numpy as np
 import os
 import tensorflow_hub as hub
 import datetime
-
+import random
 
 def is_image(filename, verbose=False):
     data = open(filename,'rb').read(10)
@@ -18,16 +18,17 @@ def is_image(filename, verbose=False):
 def load_image(image_path):
     raw = tf.io.read_file(image_path)
     img = tf.io.decode_jpeg(raw, channels=3)
-    img = tf.image.convert_image_dtype(img, tf.float32)
+    # img = tf.image.convert_image_dtype(img, tf.float32) # convert_image_dtype会对图片进行归一化操作，不能除255
     img = tf.image.resize(img, [224, 224])
+    img = tf.cast(img, tf.float32)
     img /= 255.0
+    # img = (img - 0.5)*2 
 
     return img
 
 
-def to_one_hot(label_path):
-
-    return tf.one_hot(label_path, 2)
+def to_one_hot(image_label):
+    return tf.one_hot(image_label, len(class_names))
 
 
 def make_model(num_classes):
@@ -42,7 +43,6 @@ def make_model(num_classes):
 
 
 def genearte_image_list(data_root):
-    
     class_dirs = [os.path.join(data_root, class_name) for class_name in class_names]
     
     image_paths = []
@@ -61,9 +61,62 @@ def genearte_image_list(data_root):
                 image_label = class_names.index(class_dir[len(data_root)+1:])
                 image_paths.append(image_path)
                 image_labels.append(image_label)
+    
+    # 此处打乱提高低负载设备性能
+    random.seed(123)
+    random.shuffle(image_paths)
+    random.seed(123)
+    random.shuffle(image_labels)
         
     return image_paths, image_labels
 
+
+def generate_split_dataset(image_paths, image_labels, split_rate=0.8):
+    image_dataset = tf.data.Dataset.from_tensor_slices(image_paths).map(load_image)
+    label_dataset = tf.data.Dataset.from_tensor_slices(image_labels).map(to_one_hot)
+    dataset = tf.data.Dataset.zip((image_dataset, label_dataset))
+    # dataset = dataset.shuffle(dataset.cardinality().numpy(), reshuffle_each_iteration=False) # reshuffle_each_iteration默认为True,每次迭代数据都会重新洗牌
+
+    # 划分数据集
+    data_len = dataset.cardinality().numpy()
+    train_len = int(data_len*split_rate)
+    val_len = data_len - train_len
+    
+    train_dataset = dataset.take(train_len)
+    val_dataset = dataset.skip(train_len).take(val_len)
+
+
+    print(f"\nloaded {data_len} images.")
+    print(f"training on {train_len} images, validating on {val_len} images.\n")
+
+    return train_dataset, val_dataset
+
+
+def train(train_ds, val_ds, EPOCHS, BATCH_SIZE=32):
+    train_ds = train_ds.shuffle(train_ds.cardinality().numpy()).batch(BATCH_SIZE)
+    val_ds = val_ds.batch(BATCH_SIZE)
+
+    # 配置tensorboard
+    log_dir="runs/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+    tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
+
+    model = make_model(num_classes=len(class_names))
+    model.summary()
+    model.compile(
+        loss='categorical_crossentropy',
+        optimizer='adam',
+        metrics=['accuracy']
+    )
+    model.fit(
+        train_ds,
+        validation_data=val_ds, 
+        epochs=EPOCHS, 
+        callbacks=[tensorboard_callback]
+        )
+    
+    model.save('model/model.h5')
+
+    
 
 if __name__ == '__main__':
 
@@ -74,42 +127,8 @@ if __name__ == '__main__':
 
     image_paths, image_labels = genearte_image_list(data_root)
 
-    image_dataset = tf.data.Dataset.from_tensor_slices(image_paths).map(load_image)
-    label_dataset = tf.data.Dataset.from_tensor_slices(image_labels).map(to_one_hot)
-    dataset = tf.data.Dataset.zip((image_dataset, label_dataset))
-    dataset = dataset.shuffle(dataset.cardinality().numpy())
+    train_ds, val_ds = generate_split_dataset(image_paths, image_labels, split_rate=0.7)
 
-    # 划分数据集
-    data_len = dataset.cardinality().numpy()
-    train_len = int(data_len*0.7)
-    val_len = data_len - train_len
+    train(train_ds, val_ds, EPOCHS=10, BATCH_SIZE=32)
+
     
-    train_dataset = dataset.take(train_len)
-    val_dataset = dataset.skip(train_len).take(val_len)
-
-    model = make_model(num_classes=len(class_names))
-    model.summary()
-
-    model.compile(
-        loss=tf.keras.losses.CategoricalCrossentropy(),
-        optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
-        metrics=['accuracy']
-    )
-
-    log_dir="runs/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-    tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
-
-    print(f"loaded {data_len} images.")
-    print(f"training on {train_len} images, validating on {val_len} images.")
-
-    train_dataset = train_dataset.shuffle(train_len).batch(batch_size=32)
-    val_dataset = val_dataset.batch(32)
-
-    model.fit(
-        train_dataset,
-        validation_data=val_dataset, 
-        epochs=1, 
-        callbacks=[tensorboard_callback]
-        )
-    
-    model.save('model/model.h5')
