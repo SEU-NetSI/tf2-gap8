@@ -72,7 +72,7 @@ compile_model: $(MODEL_GEN_EXE)
 $(MODEL_GEN_C): $(MODEL_GEN_EXE)
 	echo "RUNNING AUTOTILER MODEL"
 	$(MODEL_GEN_EXE) -o $(MODEL_BUILD) -c $(MODEL_BUILD) $(MODEL_GEN_EXTRA_FLAGS)
-	sed -i 's/"mnist.h"/"application.h"/g' $(addsuffix .h, $(MODEL_GEN))
+	sed -i 's/"model.h"/"application.h"/g' $(addsuffix .h, $(MODEL_GEN))
 
 # A phony target to simplify including this in the main Makefile
 model: $(MODEL_GEN_C)

@@ -8,10 +8,10 @@ ifndef GAP_SDK_HOME
   $(error Source sourceme in gap_sdk first)
 endif
 
-MODEL_PREFIX=mnist
-AT_INPUT_WIDTH=28
-AT_INPUT_HEIGHT=28
-AT_INPUT_COLORS=1
+MODEL_PREFIX=model
+AT_INPUT_WIDTH=224
+AT_INPUT_HEIGHT=224
+AT_INPUT_COLORS=3
 
 LOAD_QUANTIZATION= #-q #to load a tflite quantized model
 IMAGE=$(CURDIR)/samples/1.pgm

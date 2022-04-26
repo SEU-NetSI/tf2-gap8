@@ -3,7 +3,7 @@
 
 
 
-#define __PREFIX(x)  mnist##x
+#define __PREFIX(x)  model##x
 
 #include "Gap.h"
 

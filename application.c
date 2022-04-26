@@ -5,10 +5,10 @@
 #include "stdio.h"
 
 
-#define IMG_W 28
-#define IMG_H 28
-#define IMG_C 1
-#define NUM_CLASSES 10
+#define IMG_W 224
+#define IMG_H 224
+#define IMG_C 3
+#define NUM_CLASSES 2
 #define __XSTR(__s) __STR(__s)
 #define __STR(__s) #__s
 
@@ -70,7 +70,7 @@ int application()
 
     // read image from file
     char *ImageName = __XSTR(AT_IMAGE);
-    if (ReadImageFromFile(ImageName, IMG_W, IMG_H, IMG_C, Input_1, sizeof(char)*(IMG_W*IMG_H), IMGIO_OUTPUT_CHAR, 0))
+    if (ReadImageFromFile(ImageName, IMG_W, IMG_H, IMG_C, Input_1, sizeof(char)*(IMG_W*IMG_H*IMG_C), IMGIO_OUTPUT_CHAR, 0))
     {
         printf("Failed to load image %s\n", ImageName);
         pmsis_exit(-3);
