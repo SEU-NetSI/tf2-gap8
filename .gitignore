@@ -1,8 +1,8 @@
 .vscode/
 BUILD*/
 .ipynb_checkpoints/
-*.pgm
 runs/
-model/
 __pycache__/
 samples/
+model/*.h5
+model/*.json

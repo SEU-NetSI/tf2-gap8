@@ -1,5 +1,5 @@
 #include "application.h"
-#include "mnistKernels.h"
+#include "modelKernels.h"
 #include "gaplib/ImgIO.h"
 #include "pmsis.h"
 #include "stdio.h"
@@ -108,7 +108,9 @@ int application()
     
     printf("Constructor\n");
     // IMPORTANT - MUST BE CALLED AFTER THE CLUSTER IS SWITCHED ON!!!!
-    if(__PREFIX(CNN_Construct)())
+    int error = __PREFIX(CNN_Construct)();
+    printf("%d\n", error); // error id =3 L2 is used up
+    if(error)
     {
         printf("Graph constructor exited with an error\n");
         pmsis_exit(-5);

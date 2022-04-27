@@ -31,8 +31,8 @@ MODEL_STATE = $(MODEL_BUILD)/$(MODEL_PREFIX).json
 MODEL_SRC = $(MODEL_PREFIX)Model.c
 MODEL_HEADER = $(MODEL_PREFIX)Info.h
 MODEL_GEN = $(MODEL_BUILD)/$(MODEL_PREFIX)Kernels 
-MODEL_GEN_C = $(addsuffix .c, $(MODEL_GEN))
-MODEL_GEN_CLEAN = $(MODEL_GEN_C) $(addsuffix .h, $(MODEL_GEN))
+MODEL_GEN_C = $(addsuffix .c, $(MODEL_GEN)) $(MODEL_EXPRESSIONS)
+MODEL_GEN_CLEAN = $(MODEL_GEN_C) $(addsuffix .h, $(MODEL_GEN)) $(MODEL_EXPRESSIONS)
 MODEL_GEN_EXE = $(MODEL_BUILD)/GenTile
 
 ifdef MODEL_QUANTIZED
@@ -51,6 +51,8 @@ IMAGES ?= samples
 RM=rm -f
 
 NNTOOL=nntool
+
+MODEL_EXPRESSIONS = $(MODEL_BUILD)/Expression_Kernels.c
 
 include $(RULES_DIR)/at_common_decl.mk
 $(info GEN ... $(CNN_GEN))
