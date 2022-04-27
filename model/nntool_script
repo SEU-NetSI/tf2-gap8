@@ -2,8 +2,7 @@ adjust
 fusions -a expression_matcher
 fusions --scale8
 show
-imageformat input_1 rgb888 offset_int8
-show
+imageformat input_1 rgb888 shift_int8
 aquant samples/* -s SQ8
 qshow
 # dump samples/0_0.pgm -S tensors_1

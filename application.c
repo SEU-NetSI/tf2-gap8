@@ -14,9 +14,7 @@
 
 static unsigned char * Input_1;
 static signed short * Output_1;
-static struct pi_device cluster_dev;
-static struct pi_cluster_conf conf;
-static struct pi_cluster_task *task;
+
 
 AT_HYPERFLASH_FS_EXT_ADDR_TYPE __PREFIX(_L3_Flash) = 0;
 
@@ -77,6 +75,8 @@ int application()
     }
     
     /*Configure Cluster Task*/
+    struct pi_device cluster_dev;
+    struct pi_cluster_conf conf;
 
     pi_cluster_conf_init(&conf);
     pi_open_from_conf(&cluster_dev, (void*)&conf);
@@ -90,7 +90,7 @@ int application()
     printf("Cluster open\n");
 
     
-    task = pi_l2_malloc(sizeof(struct pi_cluster_task));
+    struct pi_cluster_task *task = pi_l2_malloc(sizeof(struct pi_cluster_task));
     if(task==NULL)
     {
         printf("Fail to allocate memory for cluster task !\n");
@@ -128,7 +128,7 @@ int application()
     pi_cluster_close(&cluster_dev);
     pi_l2_free(task, (sizeof(struct pi_cluster_task)));
     pi_l2_free(Output_1, (NUM_CLASSES*sizeof(signed short)));
-    pi_l2_free(Input_1, ((IMG_H*IMG_W)*sizeof(unsigned char)));
+    pi_l2_free(Input_1, ((IMG_H*IMG_W*IMG_C)*sizeof(unsigned char)));
 
     pmsis_exit(0);
 
