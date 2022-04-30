@@ -14,7 +14,7 @@ AT_INPUT_HEIGHT=224
 AT_INPUT_COLORS=3
 
 LOAD_QUANTIZATION= #-q #to load a tflite quantized model
-IMAGE=$(CURDIR)/samples/0_0.pgm
+IMAGE=$(CURDIR)/samples/1_0.pgm
 
 io=host
 
