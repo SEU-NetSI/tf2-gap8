@@ -2,28 +2,15 @@
 #include "modelKernels.h"
 #include "gaplib/ImgIO.h"
 
-#include "bsp/bsp.h"
-#include "bsp/camera.h"
+#include "bsp/camera/himax.h"
 
 #include "pmsis.h"
 #include "stdio.h"
 
-//#define USE_CAMERA
+#define USE_CAMERA
 
-#ifdef SLICE_MODE
-#define X                   60 
-#define Y                   60 
-#define CAMERA_WIDTH        260
-#define CAMERA_HEIGHT       180
-#else
-#define CAMERA_WIDTH        324
-#ifdef QVGA_IMG
-#define CAMERA_HEIGHT       224
-#else // max resolution of Himax camera
-#define CAMERA_HEIGHT       324
-#endif /* QVGA */
-#endif
-
+#define CAMERA_WIDTH 324
+#define CAMERA_HEIGHT 244
 
 #define IMG_W 224
 #define IMG_H 224
@@ -58,13 +45,7 @@ static int32_t open_camera_himax(struct pi_device *device)
     //初始化himax相机配置
     pi_himax_conf_init(&cam_conf);
 
-#ifdef SLICE_MODE
-    cam_conf.roi.slice_en = 1;
-    cam_conf.roi.x = X;
-    cam_conf.roi.y = Y;
-    cam_conf.roi.w = CAMERA_WIDTH;
-    cam_conf.roi.h = CAMERA_HEIGHT;
-#endif
+    cam_conf.format = PI_CAMERA_QVGA;
 
     pi_open_from_conf(device, &cam_conf);
     if (pi_camera_open(device))

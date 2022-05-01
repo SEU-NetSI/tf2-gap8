@@ -110,5 +110,5 @@ if __name__ == '__main__':
     evaluate_tflite(X_Test, Y_Test)
     
     # save picture for quantize
-    save_samples(X_Test, Y_Test, len=50)    
+    save_samples(X_Test, Y_Test, len=10)    
 

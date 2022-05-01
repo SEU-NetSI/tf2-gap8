@@ -20,7 +20,7 @@ def load_image(image_path):
     raw = tf.io.read_file(image_path)
     img = tf.io.decode_jpeg(raw, channels=1)
     # img = tf.image.convert_image_dtype(img, tf.float32) # convert_image_dtype会对图片进行归一化操作，不能除255
-    img = tf.image.resize(img, [324, 244])
+    img = tf.image.resize(img, [244, 324])
     img = tf.cast(img, tf.float32)
     img /= 255.0
     # img = (img - 0.5)*2 
@@ -43,7 +43,7 @@ def make_model(num_classes):
     # return m
 
     return tf.keras.Sequential([
-        tf.keras.Input((324, 244, 1)),
+        tf.keras.Input((244, 324, 1)),
         tf.keras.layers.experimental.preprocessing.Resizing(
             224, 224, interpolation="bilinear"
         ),
