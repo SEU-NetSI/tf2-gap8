@@ -91,7 +91,7 @@ def save_samples(x_test, y_test, len):
     y_quant = y_test[:len]
     count=0
     for i in x_quant:
-        image.save_img('samples/' + str(count) + '_' + str(y_quant[count]) + '.pgm', i)
+        image.save_img('samples/' + str(count) + '_' + str(y_quant[count]) + '.pgm', i, mode="gray")
         count += 1
 
     print("saved samples in samples/")

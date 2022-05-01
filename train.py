@@ -18,9 +18,9 @@ def is_image(filename, verbose=False):
 
 def load_image(image_path):
     raw = tf.io.read_file(image_path)
-    img = tf.io.decode_jpeg(raw, channels=3)
+    img = tf.io.decode_jpeg(raw, channels=1)
     # img = tf.image.convert_image_dtype(img, tf.float32) # convert_image_dtype会对图片进行归一化操作，不能除255
-    img = tf.image.resize(img, [224, 224])
+    img = tf.image.resize(img, [324, 244])
     img = tf.cast(img, tf.float32)
     img /= 255.0
     # img = (img - 0.5)*2 
@@ -43,7 +43,11 @@ def make_model(num_classes):
     # return m
 
     return tf.keras.Sequential([
-        Conv2D(32, (3, 3), strides=(2, 2), activation="relu", input_shape=(224, 224, 3)),
+        tf.keras.Input((324, 244, 1)),
+        tf.keras.layers.experimental.preprocessing.Resizing(
+            224, 224, interpolation="bilinear"
+        ),
+        Conv2D(32, (3, 3), strides=(2, 2), activation="relu", input_shape=(224, 224, 1)),
         MaxPooling2D(pool_size=(2, 2)),
         Conv2D(64, (3, 3), activation="relu"),
         MaxPooling2D(pool_size=(2, 2)),

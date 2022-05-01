@@ -121,6 +121,10 @@ static void cam_handler(void *arg)
     printf("Call cluster\n");
     pi_cluster_send_task_to_cl(&cluster_dev, task);
     resolve_output();
+    
+    pi_task_callback(&cam_task, cam_handler, NULL);
+    pi_camera_capture_async(&cam, Input_1, CAMERA_WIDTH * CAMERA_HEIGHT, &cam_task);
+    pi_camera_control(&cam, PI_CAMERA_CMD_START, 0);
 }
 
 
@@ -209,14 +213,11 @@ int application()
         pmsis_exit(-5);
     }
 #ifdef USE_CAMERA
-    while(1)
-    {
-        pi_camera_control(&cam, PI_CAMERA_CMD_STOP, 0);
-        pi_task_callback(&cam_task, cam_handler, NULL);
-        pi_camera_capture_async(&cam, Input_1, CAMERA_WIDTH * CAMERA_HEIGHT, &cam_task);
-        pi_camera_control(&cam, PI_CAMERA_CMD_START, 0);
-        pi_task_wait_on(&cam_task);
-    }
+    pi_camera_control(&cam, PI_CAMERA_CMD_STOP, 0);
+    pi_task_callback(&cam_task, cam_handler, NULL);
+    pi_camera_capture_async(&cam, Input_1, CAMERA_WIDTH * CAMERA_HEIGHT, &cam_task);
+    pi_camera_control(&cam, PI_CAMERA_CMD_START, 0);
+    pi_task_wait_on(&cam_task);
 #else
     printf("Call cluster\n");
     pi_cluster_send_task_to_cl(&cluster_dev, task);
