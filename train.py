@@ -1,8 +1,6 @@
 import tensorflow as tf
-import numpy as np
-import os
-import tensorflow_hub as hub
 import datetime
+import os
 import random
 from keras.layers import Conv2D, MaxPooling2D, Dense, Flatten
 
@@ -19,12 +17,9 @@ def is_image(filename, verbose=False):
 def load_image(image_path):
     raw = tf.io.read_file(image_path)
     img = tf.io.decode_jpeg(raw, channels=1)
-    # img = tf.image.convert_image_dtype(img, tf.float32) # convert_image_dtype会对图片进行归一化操作，不能除255
     img = tf.image.resize(img, [244, 324])
     img = tf.cast(img, tf.float32)
     img /= 255.0
-    # img = (img - 0.5)*2 
-
     return img
 
 
@@ -33,15 +28,6 @@ def to_one_hot(image_label):
 
 
 def make_model(num_classes):
-    # m = tf.keras.Sequential([
-    #     hub.KerasLayer("https://tfhub.dev/google/tf2-preview/mobilenet_v2/feature_vector/4", 
-    #     output_shape=[1280],
-    #     trainable=False),  # Can be True, see below.
-    # tf.keras.layers.Dense(num_classes, activation='softmax')
-    # ])
-    # m.build([None, 224, 224, 3])  # Batch input shape.
-    # return m
-
     return tf.keras.Sequential([
         tf.keras.Input((244, 324, 1)),
         tf.keras.layers.experimental.preprocessing.Resizing(
@@ -89,8 +75,7 @@ def generate_split_dataset(image_paths, image_labels, split_rate=0.8):
     image_dataset = tf.data.Dataset.from_tensor_slices(image_paths).map(load_image)
     label_dataset = tf.data.Dataset.from_tensor_slices(image_labels).map(to_one_hot)
     dataset = tf.data.Dataset.zip((image_dataset, label_dataset))
-    # dataset = dataset.shuffle(dataset.cardinality().numpy(), reshuffle_each_iteration=False) # reshuffle_each_iteration默认为True,每次迭代数据都会重新洗牌
-
+    
     # 划分数据集
     data_len = dataset.cardinality().numpy()
     train_len = int(data_len*split_rate)
@@ -99,7 +84,6 @@ def generate_split_dataset(image_paths, image_labels, split_rate=0.8):
     train_dataset = dataset.take(train_len)
     val_dataset = dataset.skip(train_len).take(val_len)
 
-
     print(f"\nloaded {data_len} images.")
     print(f"training on {train_len} images, validating on {val_len} images.\n")
 
@@ -107,30 +91,73 @@ def generate_split_dataset(image_paths, image_labels, split_rate=0.8):
 
 
 def train(train_ds, val_ds, EPOCHS, BATCH_SIZE=32):
+    
     train_ds = train_ds.shuffle(train_ds.cardinality().numpy()).batch(BATCH_SIZE)
     val_ds = val_ds.batch(BATCH_SIZE)
 
-    # 配置tensorboard
-    log_dir="runs/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-    tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
-
     model = make_model(num_classes=len(class_names))
     model.summary()
-    model.compile(
-        loss='categorical_crossentropy',
-        optimizer='adam',
-        metrics=['accuracy']
-    )
-    model.fit(
-        train_ds,
-        validation_data=val_ds, 
-        epochs=EPOCHS, 
-        callbacks=[tensorboard_callback]
-        )
-    
-    model.save('model/model.h5')
+    # 训练配置
+    loss = tf.keras.losses.CategoricalCrossentropy()
+    optimizer = tf.keras.optimizers.Adam()
+    # 记录指标
+    train_loss = tf.keras.metrics.Mean(name="train_loss")
+    train_accuracy = tf.keras.metrics.CategoricalAccuracy(name="train_acc")
+    val_loss = tf.keras.metrics.Mean(name="val_loss")
+    val_accuracy = tf.keras.metrics.CategoricalAccuracy(name="val_acc")
 
+    current_time = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+    train_log_dir = 'runs/' + current_time + '/train'
+    val_log_dir = 'runs/' + current_time + '/val'
+    train_summary_writer = tf.summary.create_file_writer(train_log_dir)
+    val_summary_writer = tf.summary.create_file_writer(val_log_dir)
     
+    # 训练阶段
+    @tf.function
+    def train_step(images, labels):
+        with tf.GradientTape() as tape:
+            logits = model(images)
+            loss_value = loss(labels, logits)
+        gradients = tape.gradient(loss_value, model.trainable_variables)
+        optimizer.apply_gradients(zip(gradients, model.trainable_variables))
+        train_loss(loss_value)
+        train_accuracy(labels, logits)
+    
+    # 验证阶段
+    @tf.function
+    def val_step(images, labels):
+        logits = model(images)
+        loss_value = loss(labels, logits)
+        val_loss(loss_value)
+        val_accuracy(labels, logits)
+    
+    # 训练循环
+    for epoch in range(EPOCHS):
+        for images, labels in train_ds:
+            train_step(images, labels)
+        with train_summary_writer.as_default():
+            tf.summary.scalar('loss', train_loss.result(), step=epoch)
+            tf.summary.scalar('accuracy', train_accuracy.result(), step=epoch)
+        
+        for images, labels in val_ds:
+            val_step(images, labels)
+        with val_summary_writer.as_default():
+            tf.summary.scalar('loss', val_loss.result(), step=epoch)
+            tf.summary.scalar('accuracy', val_accuracy.result(), step=epoch)
+        
+        print(
+            f'Epoch {epoch + 1}, '
+            f'Loss: {train_loss.result()}, '
+            f'Accuracy: {train_accuracy.result()}, '
+            f'Val Loss: {val_loss.result()}, '
+            f'Val Accuracy: {val_accuracy.result()}'
+        )
+        
+        train_loss.reset_states()
+        train_accuracy.reset_states()
+        val_loss.reset_states()
+        val_accuracy.reset_states()
+
 
 if __name__ == '__main__':
 
