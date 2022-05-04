@@ -1,5 +1,5 @@
 adjust
-# fusions -a expression_matcher
+fusions -a expression_matcher
 fusions --scale8
 show
 set input_norm_func "x: x/255"
@@ -10,6 +10,6 @@ dump samples/0_0.pgm -T -S tensors_1
 dump samples/0_0.pgm -T -S tensors_2 -q
 tensors -t tensors_1 tensors_2 -s 0
 tensors -t tensors_1 tensors_2 -s 11
-# tensors -t tensors_1 tensors_2 -s 173
+tensors -t tensors_1 tensors_2 -s 173
 save_state
 
