@@ -4,5 +4,6 @@ BUILD*/
 runs/
 __pycache__/
 samples/
-model/*.h5
-model/*.json
+*.h5
+*.tflite
+*.tar.gz

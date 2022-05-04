@@ -101,7 +101,7 @@ def save_samples(x_test, y_test, len):
 
 if __name__ == '__main__':
 
-    data_root = '/home/taozhi/archive/train' # 训练数据根目录
+    data_root = '/home/taozhi/datasets/dogs_vs_cats/train' # 训练数据根目录
 
     # prepare data
     X_Train, Y_Train, X_Test, Y_Test = load_data(data_root, split_rate=0.7)

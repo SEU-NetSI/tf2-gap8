@@ -7,14 +7,14 @@
 #include "pmsis.h"
 #include "stdio.h"
 
-#define USE_CAMERA
+//#define USE_CAMERA
 
 #define CAMERA_WIDTH 324
 #define CAMERA_HEIGHT 244
 
-#define IMG_W 324
-#define IMG_H 244
-#define IMG_C 1
+#define IMG_W 224
+#define IMG_H 224
+#define IMG_C 3
 #define NUM_CLASSES 2
 #define __XSTR(__s) __STR(__s)
 #define __STR(__s) #__s
