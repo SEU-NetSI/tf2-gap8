@@ -10,7 +10,7 @@ def load_image(image_path):
     img = tf.io.decode_jpeg(raw, channels=3)
     img = tf.image.resize(img, [224, 224])
     img = tf.cast(img, tf.float32)
-    img /= 255.0
+    img = img / 128 - 1 # 输入限制在[-1, 1]
     return img
 
 
@@ -19,14 +19,23 @@ def to_one_hot(image_label):
 
 
 def make_model(num_classes):
-    m = tf.keras.Sequential([
-        hub.KerasLayer("https://tfhub.dev/google/tf2-preview/mobilenet_v2/feature_vector/4", 
-        output_shape=[1280], 
-        trainable=False), # Can be True, see below.
-        tf.keras.layers.Dense(num_classes, activation='softmax')
-        ])
-    m.build([None, 224, 224, 3]) # Batch input shape.
-    return m
+    # m = tf.keras.Sequential([
+    #     # mobilenetv2 "https://tfhub.dev/google/tf2-preview/mobilenet_v2/feature_vector/4" output_shape:1280
+    #     hub.KerasLayer("https://tfhub.dev/google/tf2-preview/mobilenet_v2/feature_vector/4", 
+    #     output_shape=[1280], 
+    #     trainable=False), # Can be True, see below.
+    #     tf.keras.layers.Dense(num_classes, activation='softmax')
+    #     ])
+    # m.build([None, 224, 224, 3]) # Batch input shape.
+    # return m
+    return tf.keras.Sequential([
+        tf.keras.layers.Conv2D(32, (3, 3), strides=(2, 2), activation="relu", input_shape=(224, 224, 3)),
+        tf.keras.layers.MaxPooling2D(2, 2),
+        tf.keras.layers.Conv2D(64, (3, 3), activation="relu"),
+        tf.keras.layers.MaxPooling2D(2, 2),
+        tf.keras.layers.Flatten(),
+        tf.keras.layers.Dense(num_classes, activation="softmax")
+    ])
 
 
 def genearte_image_list(data_root):
@@ -81,7 +90,7 @@ def train(train_ds, val_ds, EPOCHS, BATCH_SIZE=32):
     model.summary()
     # 训练配置
     loss = tf.keras.losses.CategoricalCrossentropy()
-    optimizer = tf.keras.optimizers.Adam()
+    optimizer = tf.keras.optimizers.Adam(learning_rate=1e-4)
     # 记录指标
     train_loss = tf.keras.metrics.Mean(name="train_loss")
     train_accuracy = tf.keras.metrics.CategoricalAccuracy(name="train_acc")
@@ -154,6 +163,6 @@ if __name__ == '__main__':
 
     train_ds, val_ds = generate_split_dataset(image_paths, image_labels, split_rate=0.7)
 
-    train(train_ds, val_ds, EPOCHS=10, BATCH_SIZE=32)
+    train(train_ds, val_ds, EPOCHS=20, BATCH_SIZE=32)
 
     
