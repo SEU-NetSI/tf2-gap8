@@ -7,11 +7,20 @@
 #include "pmsis.h"
 #include "stdio.h"
 
-//#define USE_CAMERA
-
-#define CAMERA_WIDTH 324
-#define CAMERA_HEIGHT 244
-
+#define USE_CAMERA
+#ifdef SLICE_MODE
+#define X                   60 
+#define Y                   60 
+#define CAMERA_WIDTH        200
+#define CAMERA_HEIGHT       200
+#else
+#define CAMERA_WIDTH        324
+#ifdef QVGA_IMG
+#define CAMERA_HEIGHT       224
+#else // max resolution of Himax camera
+#define CAMERA_HEIGHT       324
+#endif /* QVGA */
+#endif
 #define IMG_W 224
 #define IMG_H 224
 #define IMG_C 3
@@ -30,7 +39,8 @@ static pi_task_t cam_task;
 static struct pi_cluster_task *task;
 
 AT_HYPERFLASH_FS_EXT_ADDR_TYPE __PREFIX(_L3_Flash) = 0;
-
+static char imgName[50];
+static uint32_t idx = 0;
 
 static void cluster()
 {
@@ -42,17 +52,21 @@ static void cluster()
 static int32_t open_camera_himax(struct pi_device *device)
 {
     struct pi_himax_conf cam_conf;
-    //初始化himax相机配置
     pi_himax_conf_init(&cam_conf);
 
-    cam_conf.format = PI_CAMERA_QVGA;
+#ifdef SLICE_MODE
+    cam_conf.roi.slice_en = 1;
+    cam_conf.roi.x = X;
+    cam_conf.roi.y = Y;
+    cam_conf.roi.w = CAMERA_WIDTH;
+    cam_conf.roi.h = CAMERA_HEIGHT;
+#endif
 
     pi_open_from_conf(device, &cam_conf);
     if (pi_camera_open(device))
     {
         return -1;
     }
-
 
     // Rotate camera orientation
     pi_camera_control(device, PI_CAMERA_CMD_START, 0);
@@ -98,6 +112,11 @@ static void cam_handler(void *arg)
 {
     //采集完一张图片停止捕获
     pi_camera_control(&cam, PI_CAMERA_CMD_STOP, 0);
+
+    // sprintf(imgName, "../../../img_OUT_%ld.ppm", idx);
+    // printf("Dumping image %s\n", imgName);
+    // WriteImageToFile(imgName, CAMERA_WIDTH, CAMERA_HEIGHT, sizeof(uint8_t), Input_1, GRAY_SCALE_IO);
+    // idx++;
 
     printf("Call cluster\n");
     pi_cluster_send_task_to_cl(&cluster_dev, task);
