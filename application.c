@@ -150,7 +150,7 @@ int application()
 #else
     // read image from file
     char *ImageName = __XSTR(AT_IMAGE);
-    if (ReadImageFromFile(ImageName, IMG_W, IMG_H, IMG_C, Input_1, sizeof(char)*(IMG_W*IMG_H*IMG_C), IMGIO_OUTPUT_CHAR, 0))
+    if (ReadImageFromFile(ImageName, IMG_W, IMG_H, IMG_C, Input_1, IMG_W*IMG_H*IMG_C, IMGIO_OUTPUT_CHAR, 0))
     {
         printf("Failed to load image %s\n", ImageName);
         pmsis_exit(-3);

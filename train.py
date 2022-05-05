@@ -19,23 +19,23 @@ def to_one_hot(image_label):
 
 
 def make_model(num_classes):
-    # m = tf.keras.Sequential([
-    #     # mobilenetv2 "https://tfhub.dev/google/tf2-preview/mobilenet_v2/feature_vector/4" output_shape:1280
-    #     hub.KerasLayer("https://tfhub.dev/google/tf2-preview/mobilenet_v2/feature_vector/4", 
-    #     output_shape=[1280], 
-    #     trainable=False), # Can be True, see below.
-    #     tf.keras.layers.Dense(num_classes, activation='softmax')
-    #     ])
-    # m.build([None, 224, 224, 3]) # Batch input shape.
-    # return m
-    return tf.keras.Sequential([
-        tf.keras.layers.Conv2D(32, (3, 3), strides=(2, 2), activation="relu", input_shape=(224, 224, 3)),
-        tf.keras.layers.MaxPooling2D(2, 2),
-        tf.keras.layers.Conv2D(64, (3, 3), activation="relu"),
-        tf.keras.layers.MaxPooling2D(2, 2),
-        tf.keras.layers.Flatten(),
-        tf.keras.layers.Dense(num_classes, activation="softmax")
-    ])
+    m = tf.keras.Sequential([
+        # mobilenetv2 "https://tfhub.dev/google/tf2-preview/mobilenet_v2/feature_vector/4" output_shape:1280
+        hub.KerasLayer("https://tfhub.dev/google/tf2-preview/mobilenet_v2/feature_vector/4", 
+        output_shape=[1280], 
+        trainable=False), # Can be True, see below.
+        tf.keras.layers.Dense(num_classes, activation='softmax')
+        ])
+    m.build([None, 224, 224, 3]) # Batch input shape.
+    return m
+    # return tf.keras.Sequential([
+    #     tf.keras.layers.Conv2D(32, (3, 3), strides=(2, 2), activation="relu", input_shape=(224, 224, 3)),
+    #     tf.keras.layers.MaxPooling2D(2, 2),
+    #     tf.keras.layers.Conv2D(64, (3, 3), activation="relu"),
+    #     tf.keras.layers.MaxPooling2D(2, 2),
+    #     tf.keras.layers.Flatten(),
+    #     tf.keras.layers.Dense(num_classes, activation="softmax")
+    # ])
 
 
 def genearte_image_list(data_root):

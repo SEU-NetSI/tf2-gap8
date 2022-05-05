@@ -1,7 +1,8 @@
-show
 adjust
+fusions -a expression_matcher
 fusions --scale8
 imageformat input_1 rgb888 offset_int8
+show
 
 aquant samples/* -s SQ8
 
@@ -10,5 +11,6 @@ dump samples/0_0.pgm -S tensors_2 -q
 
 tensors -t tensors_1 tensors_2 -s 1
 tensors -t tensors_1 tensors_2 -s 12
+tensors -t tensors_1 tensors_2 -s 174
 
 save_state
