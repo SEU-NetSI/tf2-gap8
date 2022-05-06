@@ -90,8 +90,10 @@ def save_samples(x_test, y_test, len):
     x_quant = x_test[:len]
     y_quant = y_test[:len]
     count=0
+    if os.path.exists('samples') == False:
+        os.mkdir('samples')
     for i in x_quant:
-        image.save_img('samples/' + str(count) + '_' + str(y_quant[count]) + '.pgm', i, mode="gray")
+        image.save_img('samples/' + str(count) + '_' + str(y_quant[count]) + '.pgm', i, mode='rgb')
         count += 1
 
     print("saved samples in samples/")
