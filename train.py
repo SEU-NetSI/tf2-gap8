@@ -90,12 +90,12 @@ def train(train_ds, val_ds, EPOCHS, BATCH_SIZE=32):
     model.summary()
     # 训练配置
     loss = tf.keras.losses.CategoricalCrossentropy()
-    optimizer = tf.keras.optimizers.Adam(learning_rate=1e-4)
+    optimizer = tf.keras.optimizers.SGD(learning_rate=0.01)
     # 记录指标
     train_loss = tf.keras.metrics.Mean(name="train_loss")
-    train_accuracy = tf.keras.metrics.CategoricalAccuracy(name="train_acc")
+    train_accuracy = tf.keras.metrics.Accuracy(name="train_acc")
     val_loss = tf.keras.metrics.Mean(name="val_loss")
-    val_accuracy = tf.keras.metrics.CategoricalAccuracy(name="val_acc")
+    val_accuracy = tf.keras.metrics.Accuracy(name="val_acc")
 
     current_time = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     train_log_dir = 'runs/' + current_time + '/train'
@@ -112,7 +112,7 @@ def train(train_ds, val_ds, EPOCHS, BATCH_SIZE=32):
         gradients = tape.gradient(loss_value, model.trainable_variables)
         optimizer.apply_gradients(zip(gradients, model.trainable_variables))
         train_loss(loss_value)
-        train_accuracy(labels, logits)
+        train_accuracy(tf.argmax(labels, axis=1), tf.argmax(logits, axis=1))
     
     # 验证阶段
     @tf.function
@@ -120,7 +120,7 @@ def train(train_ds, val_ds, EPOCHS, BATCH_SIZE=32):
         logits = model(images)
         loss_value = loss(labels, logits)
         val_loss(loss_value)
-        val_accuracy(labels, logits)
+        val_accuracy(tf.argmax(labels, axis=1), tf.argmax(logits, axis=1))
     
     # 训练循环
     for epoch in range(EPOCHS):
