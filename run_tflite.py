@@ -85,7 +85,7 @@ def evaluate_tflite(x_test, y_test):
     print(f"tflite accuracy: {tflite_accuracy}")
 
 
-def save_samples(x_test, y_test, len):
+def save_samples(x_test, y_test, len, mode='gray'):
     print(f"generate {len} samples for quantize.")
     x_quant = x_test[:len]
     y_quant = y_test[:len]
@@ -93,7 +93,7 @@ def save_samples(x_test, y_test, len):
     if os.path.exists('samples') == False:
         os.mkdir('samples')
     for i in x_quant:
-        image.save_img('samples/' + str(count) + '_' + str(y_quant[count]) + '.pgm', i, mode='rgb')
+        image.save_img('samples/' + str(count) + '_' + str(y_quant[count]) + '.pgm', i, mode=mode)
         count += 1
 
     print("saved samples in samples/")
@@ -103,7 +103,7 @@ def save_samples(x_test, y_test, len):
 
 if __name__ == '__main__':
 
-    data_root = '/home/taozhi/datasets/dogs_vs_cats/train' # 训练数据根目录
+    data_root = '/home/taozhi/datasets/face2' # 训练数据根目录
 
     # prepare data
     X_Train, Y_Train, X_Test, Y_Test = load_data(data_root, split_rate=0.7)
@@ -112,5 +112,5 @@ if __name__ == '__main__':
     evaluate_tflite(X_Test, Y_Test)
     
     # save picture for quantize
-    save_samples(X_Test, Y_Test, len=10)    
+    save_samples(X_Test, Y_Test, len=10, mode='gray')    
 
