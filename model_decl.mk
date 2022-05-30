@@ -44,9 +44,7 @@ MODEL_GENFLAGS_EXTRA =
 EXTRA_GENERATOR_SRC =
 
 $(info script $(NNTOOL_SCRIPT))
-ifndef NNTOOL_SCRIPT
-  NNTOOL_SCRIPT=model/nntool_script
-endif
+
 IMAGES ?= samples
 RM=rm -f
 

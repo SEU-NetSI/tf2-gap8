@@ -1,0 +1,13 @@
+set debug true
+show
+adjust
+fusions --scale8
+qshow
+imageformat input_1 bw8 offset_int8
+
+dump samples/0_0.pgm -S res1
+tensors -t res1 -s 0
+tensors -t res1 -s 1
+tensors -t res1 -s 15
+
+save_state

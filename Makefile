@@ -11,7 +11,7 @@ endif
 MODEL_PREFIX=model
 AT_INPUT_WIDTH=224
 AT_INPUT_HEIGHT=224
-AT_INPUT_COLORS=3
+AT_INPUT_COLORS=1
 
 LOAD_QUANTIZATION= #-q #to load a tflite quantized model
 IMAGE=$(CURDIR)/samples/0_0.pgm
@@ -24,13 +24,19 @@ RAM_FLASH_TYPE ?= HYPER
 APP_CFLAGS += -DUSE_HYPER
 MODEL_L3_EXEC=hram
 MODEL_L3_CONST=hflash
+
 #use tflite_q model
-MODEL_QUANTIZED=
+MODEL_QUANTIZED=1
+TRAINED_MODEL=model/voc_q.tflite
 
 QUANT_BITS?=8
 BUILD_DIR=BUILD
 MODEL_SQ8=1
-NNTOOL_SCRIPT=model/nntool_script
+ifeq ($(MODEL_QUANTIZED), 1)
+  NNTOOL_SCRIPT=model/nntool_script_q
+else
+  NNTOOL_SCRIPT=model/nntool_script
+endif
 MODEL_SUFFIX = _SQ8BIT
 
 $(info Building GAP8 mode with $(QUANT_BITS) bit quantization)

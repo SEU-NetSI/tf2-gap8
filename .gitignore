@@ -3,7 +3,4 @@ BUILD*/
 .ipynb_checkpoints/
 runs/
 __pycache__/
-samples/
 *.h5
-*.tflite
-*.tar.gz

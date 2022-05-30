@@ -34,6 +34,9 @@ ifdef MODEL_L3_MEMORY
 endif
 
 
+$(IMAGES):
+	mkdir $(IMAGES)
+
 $(MODEL_BUILD):
 	mkdir $(MODEL_BUILD)
 

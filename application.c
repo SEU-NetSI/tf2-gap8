@@ -7,7 +7,7 @@
 #include "pmsis.h"
 #include "stdio.h"
 
-#define USE_CAMERA
+//#define USE_CAMERA
 #ifdef SLICE_MODE
 #define X                   60 
 #define Y                   60 
@@ -23,7 +23,7 @@
 #endif
 #define IMG_W 224
 #define IMG_H 224
-#define IMG_C 3
+#define IMG_C 1
 #define NUM_CLASSES 2
 #define __XSTR(__s) __STR(__s)
 #define __STR(__s) #__s
