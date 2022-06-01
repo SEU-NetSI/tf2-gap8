@@ -4,7 +4,7 @@ imageformat input_1 bw8 shift_int8
 show
 qshow
 
-dump samples/2_0.pgm -S tensors_1
-tensors -t tensors_1 -s 1
-tensors -t tensors_1 -s 15
+# dump samples/2_0.pgm -S tensors_1
+# tensors -t tensors_1 -s 1
+# tensors -t tensors_1 -s 94
 save_state
