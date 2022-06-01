@@ -1,4 +1,4 @@
-## 环境要求
+## 环境配置
 查看https://seunetsi.feishu.cn/wiki/wikcnlM1ntLRl1IwgwQJkqaCZJi搭建GAPSDK环境，本项目的测试环境基于gap_sdk v4.12.0
 
 ## 训练模型
