@@ -11,8 +11,12 @@ https://github.com/aqqz/tf2.git
 ## 移植
 修改Makefile中的`TRAINED_MODEL`变量为对应的tflite模型
 
-## 运行
-在项目Makefile目录下
+## 编译运行
 ```bash
 make clean all run
+```
+
+## 烧录至aideck
+```bash
+make clean all image flash
 ```
