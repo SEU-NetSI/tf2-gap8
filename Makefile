@@ -14,7 +14,7 @@ AT_INPUT_HEIGHT=224
 AT_INPUT_COLORS=1
 
 
-IMAGE=$(CURDIR)/samples/2_0.pgm
+IMAGE=$(CURDIR)/samples/0_3.png
 
 io=host
 
@@ -27,7 +27,7 @@ MODEL_L3_CONST=hflash
 
 #use tflite_q model
 MODEL_QUANTIZED=1
-TRAINED_MODEL=model/voc_q.tflite
+TRAINED_MODEL=model/model.tflite
 
 QUANT_BITS?=8
 BUILD_DIR=BUILD

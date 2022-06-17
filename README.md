@@ -20,3 +20,17 @@ make clean all run
 ```bash
 make clean all image flash
 ```
+
+## 示例
+以花分类模型作为测试示例
+
+测试模型: model/model.tflite
+
+测试图片: samples/0_3.pgm
+
+![alt](0_3.png)
+
+输出结果：
+
+![alt](result.png)
+

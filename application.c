@@ -24,7 +24,7 @@
 #define IMG_W 224
 #define IMG_H 224
 #define IMG_C 1
-#define NUM_CLASSES 2
+#define NUM_CLASSES 5
 #define __XSTR(__s) __STR(__s)
 #define __STR(__s) #__s
 
