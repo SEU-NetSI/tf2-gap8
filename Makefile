@@ -14,7 +14,7 @@ AT_INPUT_HEIGHT=224
 AT_INPUT_COLORS=1
 
 
-IMAGE=$(CURDIR)/samples/0_3.png
+IMAGE=$(CURDIR)/samples/0_3.pgm
 
 io=host
 
